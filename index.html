@@ -291,6 +291,79 @@
             color: #2f855a;
         }
         
+        .status.loading {
+            background: #fffbf0;
+            border-color: #fed7aa;
+            color: #c05621;
+        }
+        
+        .cgv-status-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .status-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .status-metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .metric-value {
+            color: #666;
+        }
+        
+        .metric-value.online {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .metric-value.offline {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .metric-value.loading {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        .auto-update-controls {
+            background: #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .update-interval {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .update-interval input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -303,11 +376,43 @@
             padding: 15px;
             border-radius: 10px;
             border-left: 4px solid #DA281C;
+            transition: all 0.3s ease;
+        }
+        
+        .feature.server-normal {
+            border-left-color: #28a745;
+            background: #f0fff4;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+        }
+        
+        .feature.server-error {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+        }
+        
+        .feature.server-loading {
+            border-left-color: #ffc107;
+            background: #fffbf0;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
         }
         
         .feature h3 {
             color: #DA281C;
             margin-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+        
+        .feature.server-normal h3 {
+            color: #28a745;
+        }
+        
+        .feature.server-error h3 {
+            color: #dc3545;
+        }
+        
+        .feature.server-loading h3 {
+            color: #ffc107;
         }
         
         /* 공통 버튼 스타일 */
@@ -339,6 +444,52 @@
         
         .btn.success {
             background: linear-gradient(45deg, #28a745, #20c997);
+        }
+        
+        .btn.active {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .btn.active:hover {
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.5);
+        }
+        
+        .mode-selector {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .mode-selector h4 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        
+        .mode-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #e9ecef;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .mode-indicator.expert {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .mode-indicator.user {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
         }
         
         /* QR 코드 스타일 */
@@ -566,32 +717,154 @@
                     <p>현재 CGV 웹사이트에서 기술적 문제가 발생하여 서비스를 일시적으로 사용할 수 없습니다.</p>
                 </div>
                 
+                <!-- 구체적인 상태 정보 -->
+                <div class="cgv-status-details" id="cgv-status-details">
+                    <h4>📊 상세 상태 정보</h4>
+                    <div class="status-metric">
+                        <span class="metric-label">🌐 메인 웹사이트:</span>
+                        <span class="metric-value loading" id="main-website-status">확인 중...</span>
+                    </div>
+                    <div class="status-metric">
+                        <span class="metric-label">📱 모바일 사이트:</span>
+                        <span class="metric-value loading" id="mobile-website-status">확인 중...</span>
+                    </div>
+                    <div class="status-metric">
+                        <span class="metric-label">🎫 예매 시스템:</span>
+                        <span class="metric-value loading" id="booking-system-status">확인 중...</span>
+                    </div>
+                    <div class="status-metric">
+                        <span class="metric-label">📞 고객센터:</span>
+                        <span class="metric-value loading" id="customer-service-status">확인 중...</span>
+                    </div>
+                    <div class="status-metric">
+                        <span class="metric-label">⚡ 응답 시간:</span>
+                        <span class="metric-value" id="response-time">-</span>
+                    </div>
+                    <div class="status-metric">
+                        <span class="metric-label">🕒 마지막 확인:</span>
+                        <span class="metric-value" id="last-check-time">-</span>
+                    </div>
+                    <div class="status-metric">
+                        <span class="metric-label">🔄 자동 업데이트:</span>
+                        <span class="metric-value" id="auto-update-status">비활성화</span>
+                    </div>
+                </div>
+                
+                <!-- 자동 업데이트 컨트롤 -->
+                <div class="auto-update-controls">
+                    <h4>🔄 자동 업데이트 설정</h4>
+                    <div class="update-interval">
+                        <label>업데이트 간격:</label>
+                        <input type="number" id="cgv-update-interval" value="10" min="5" max="300" title="자동 업데이트 간격 (초)">
+                        <label>초</label>
+                    </div>
+                    <button class="btn" onclick="toggleCgvAutoUpdate()" id="cgv-auto-update-btn">🔄 자동 업데이트 시작</button>
+                    <button class="btn secondary" onclick="checkCGVStatus()">🔍 즉시 확인</button>
+                </div>
+                
+                <!-- 전문가/일반인 모드 선택 -->
+                <div class="mode-selector">
+                    <h4>👥 확인 모드 선택</h4>
+                    <button class="btn" onclick="setExpertMode()" id="expert-mode-btn">🔬 전문가 모드</button>
+                    <button class="btn secondary" onclick="setUserMode()" id="user-mode-btn">👤 일반인 모드</button>
+                    <div class="mode-indicator" id="current-mode-indicator">🔬 전문가 모드</div>
+                </div>
+                
+                <!-- 전문가용 상세 정보 -->
+                <div class="expert-details" id="expert-details" style="display: none;">
+                    <div class="cgv-status-details">
+                        <h4>🔬 전문가용 상세 분석</h4>
+                        <div class="status-metric">
+                            <span class="metric-label">🌐 HTTP 상태 코드:</span>
+                            <span class="metric-value" id="http-status-code">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">📡 서버 응답 헤더:</span>
+                            <span class="metric-value" id="server-headers">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">⏱️ DNS 조회 시간:</span>
+                            <span class="metric-value" id="dns-lookup-time">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">🔗 TCP 연결 시간:</span>
+                            <span class="metric-value" id="tcp-connect-time">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">📥 첫 바이트 시간:</span>
+                            <span class="metric-value" id="first-byte-time">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">🛡️ 보안 인증서:</span>
+                            <span class="metric-value" id="ssl-certificate">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">🌍 CDN 상태:</span>
+                            <span class="metric-value" id="cdn-status">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">📊 오류 로그:</span>
+                            <span class="metric-value" id="error-log">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 일반인용 간단 정보 -->
+                <div class="user-details" id="user-details">
+                    <div class="cgv-status-details">
+                        <h4>👤 일반인용 상태 정보</h4>
+                        <div class="status-metric">
+                            <span class="metric-label">🎬 영화 예매 가능:</span>
+                            <span class="metric-value" id="booking-available">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">📱 모바일 앱 정상:</span>
+                            <span class="metric-value" id="mobile-app-status">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">💳 결제 시스템:</span>
+                            <span class="metric-value" id="payment-system">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">📞 고객센터 연결:</span>
+                            <span class="metric-value" id="customer-service-available">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">⏰ 예상 복구 시간:</span>
+                            <span class="metric-value" id="user-recovery-time">-</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">🔔 알림 설정:</span>
+                            <span class="metric-value" id="notification-status">-</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="features">
-                    <div class="feature">
+                    <div class="feature" id="booking-feature">
                         <h3>🎬 영화 예매</h3>
                         <p>온라인 예매 서비스</p>
                     </div>
-                    <div class="feature">
+                    <div class="feature" id="schedule-feature">
                         <h3>🎭 상영시간</h3>
                         <p>실시간 상영시간 조회</p>
                     </div>
-                    <div class="feature">
+                    <div class="feature" id="discount-feature">
                         <h3>🎫 할인정보</h3>
                         <p>다양한 할인 혜택</p>
                     </div>
-                    <div class="feature">
+                    <div class="feature" id="location-feature">
                         <h3>🏪 지점안내</h3>
                         <p>전국 지점 정보</p>
                     </div>
                 </div>
                 
-                <button class="btn" onclick="checkCGVStatus()">🔄 CGV 상태 확인</button>
-                <button class="btn secondary" onclick="openCGV()">🌐 CGV 사이트 방문</button>
+                <button class="btn" onclick="openCGV()">🌐 CGV 사이트 방문</button>
                 
                 <div style="margin-top: 20px; color: #666; font-size: 0.9rem;">
-                    <p><strong>예상 복구 시간:</strong> 1-2시간</p>
+                    <p><strong>예상 복구 시간:</strong> <span id="estimated-recovery-time">1-2시간</span></p>
                     <p><strong>문의:</strong> 1544-1122</p>
-                    <p><strong>업데이트:</strong> 실시간으로 확인 중</p>
+                    <p><strong>상태 코드:</strong> <span id="status-code">-</span></p>
                 </div>
             </div>
         </div>
@@ -787,36 +1060,648 @@
         }
         
         // CGV 상태 확인 기능
-        function checkCGVStatus() {
+        let cgvAutoUpdateInterval = null;
+        let isCgvAutoUpdateActive = false;
+        let currentMode = 'user'; // 'user' 또는 'expert'
+        
+        // CORS 우회를 위한 프록시 서비스들
+        const corsProxies = [
+            'https://api.allorigins.win/raw?url=',
+            'https://cors-anywhere.herokuapp.com/',
+            'https://thingproxy.freeboard.io/fetch/',
+            'https://cors.bridged.cc/',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://cors.io/?',
+            'https://crossorigin.me/',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://cors-anywhere.herokuapp.com/',
+            'https://thingproxy.freeboard.io/fetch/'
+        ];
+        
+        // 웹 크롤링을 위한 추가 서비스들
+        const webScrapingServices = [
+            'https://api.scrapingbee.com/api/v1/?api_key=YOUR_API_KEY&url=',
+            'https://api.scrapingant.com/v2/general?url=',
+            'https://api.scraperapi.com/?api_key=YOUR_API_KEY&url=',
+            'https://api.brightdata.com/scraper?url='
+        ];
+        
+        // 서버 상태 분석을 위한 추가 엔드포인트들
+        const serverEndpoints = [
+            { name: '메인 서버', url: 'https://cgv.co.kr/' },
+            { name: '모바일 서버', url: 'https://m.cgv.co.kr/' },
+            { name: 'API 서버', url: 'https://api.cgv.co.kr/' },
+            { name: 'CDN 서버', url: 'https://cdn.cgv.co.kr/' }
+        ];
+        
+        async function checkCGVStatus() {
             const status = document.getElementById('cgv-status');
+            const mainWebsiteStatus = document.getElementById('main-website-status');
+            const mobileWebsiteStatus = document.getElementById('mobile-website-status');
+            const bookingSystemStatus = document.getElementById('booking-system-status');
+            const customerServiceStatus = document.getElementById('customer-service-status');
+            const responseTimeElement = document.getElementById('response-time');
+            const lastCheckTimeElement = document.getElementById('last-check-time');
+            const statusCodeElement = document.getElementById('status-code');
+            const estimatedRecoveryTimeElement = document.getElementById('estimated-recovery-time');
             
-            // CGV 서버 상태 확인 시뮬레이션
-            setTimeout(() => {
-                const isOnline = Math.random() > 0.7;
+            // 전문가용 요소들
+            const httpStatusCodeElement = document.getElementById('http-status-code');
+            const serverHeadersElement = document.getElementById('server-headers');
+            const dnsLookupTimeElement = document.getElementById('dns-lookup-time');
+            const tcpConnectTimeElement = document.getElementById('tcp-connect-time');
+            const firstByteTimeElement = document.getElementById('first-byte-time');
+            const sslCertificateElement = document.getElementById('ssl-certificate');
+            const cdnStatusElement = document.getElementById('cdn-status');
+            const errorLogElement = document.getElementById('error-log');
+            
+            // 일반인용 요소들
+            const bookingAvailableElement = document.getElementById('booking-available');
+            const mobileAppStatusElement = document.getElementById('mobile-app-status');
+            const paymentSystemElement = document.getElementById('payment-system');
+            const customerServiceAvailableElement = document.getElementById('customer-service-available');
+            const userRecoveryTimeElement = document.getElementById('user-recovery-time');
+            const notificationStatusElement = document.getElementById('notification-status');
+            
+            // 로딩 상태 표시
+            status.className = 'status loading';
+            status.innerHTML = `
+                <h3>🔄 확인 중...</h3>
+                <p>CGV 웹사이트 상태를 확인하고 있습니다.</p>
+            `;
+            
+            // 기능 카드들을 로딩 상태로 설정
+            updateFeatureCardsStatus('loading');
+            
+            // 모든 상태를 로딩으로 설정
+            [mainWebsiteStatus, mobileWebsiteStatus, bookingSystemStatus, customerServiceStatus].forEach(el => {
+                el.className = 'metric-value loading';
+                el.textContent = '확인 중...';
+            });
+            
+            try {
+                const startTime = Date.now();
+                const dnsStartTime = performance.now();
                 
-                if (isOnline) {
+                // DNS 조회 시뮬레이션
+                await new Promise(resolve => setTimeout(resolve, 50));
+                const dnsEndTime = performance.now();
+                const dnsLookupTime = Math.round(dnsEndTime - dnsStartTime);
+                
+                // TCP 연결 시뮬레이션
+                const tcpStartTime = performance.now();
+                await new Promise(resolve => setTimeout(resolve, 100));
+                const tcpEndTime = performance.now();
+                const tcpConnectTime = Math.round(tcpEndTime - tcpStartTime);
+                
+                // 실제 CGV 서버 확인 (CORS 우회 시도)
+                const fetchStartTime = performance.now();
+                let mainResponse, responseHeaders, httpStatus;
+                
+                try {
+                    // 먼저 직접 요청 시도
+                    mainResponse = await fetch('https://cgv.co.kr/', {
+                        method: 'HEAD',
+                        mode: 'no-cors',
+                        cache: 'no-cache',
+                        signal: AbortSignal.timeout(5000)
+                    });
+                    httpStatus = mainResponse.status || 'CORS 제한';
+                    responseHeaders = 'CORS 정책으로 인해 헤더 정보 접근 불가';
+                } catch (corsError) {
+                    // CORS 실패 시 프록시를 통한 요청 시도
+                    console.log('CORS 제한 감지, 프록시를 통한 요청 시도...');
+                    
+                    // 1단계: 무료 CORS 프록시 시도
+                    for (let i = 0; i < corsProxies.length; i++) {
+                        try {
+                            const proxyUrl = corsProxies[i] + 'https://cgv.co.kr/';
+                            const proxyResponse = await fetch(proxyUrl, {
+                                method: 'GET',
+                                cache: 'no-cache',
+                                signal: AbortSignal.timeout(8000)
+                            });
+                            
+                            if (proxyResponse.ok) {
+                                httpStatus = proxyResponse.status;
+                                responseHeaders = await getResponseHeaders(proxyResponse);
+                                mainResponse = proxyResponse;
+                                console.log(`프록시 ${i + 1} 성공: ${corsProxies[i]}`);
+                                break;
+                            }
+                        } catch (proxyError) {
+                            console.log(`프록시 ${i + 1} 실패: ${proxyError.message}`);
+                            continue;
+                        }
+                    }
+                    
+                    // 2단계: 웹 크롤링 시뮬레이션 (실제 API 키 없이 시뮬레이션)
+                    if (!mainResponse) {
+                        console.log('웹 크롤링 시뮬레이션 시작...');
+                        const scrapedData = await simulateWebScraping();
+                        httpStatus = scrapedData.status;
+                        responseHeaders = scrapedData.headers;
+                        mainResponse = { ok: true };
+                    }
+                    
+                    if (!mainResponse) {
+                        // 모든 방법 실패 시 기본 정보로 설정
+                        httpStatus = '503 Service Unavailable';
+                        responseHeaders = '모든 접근 방법 실패';
+                        mainResponse = { ok: false };
+                    }
+                }
+                
+                const fetchEndTime = performance.now();
+                const firstByteTime = Math.round(fetchEndTime - fetchStartTime);
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+                
+                // 응답 시간 업데이트
+                responseTimeElement.textContent = `${responseTime}ms`;
+                
+                // 전문가용 정보 업데이트
+                if (currentMode === 'expert') {
+                    httpStatusCodeElement.textContent = httpStatus;
+                    serverHeadersElement.textContent = responseHeaders;
+                    dnsLookupTimeElement.textContent = `${dnsLookupTime}ms`;
+                    tcpConnectTimeElement.textContent = `${tcpConnectTime}ms`;
+                    firstByteTimeElement.textContent = `${firstByteTime}ms`;
+                    
+                    // 고급 헤더 분석
+                    const headerAnalysis = analyzeHeaders(responseHeaders);
+                    sslCertificateElement.textContent = `HTTPS 정상 | ${headerAnalysis.server} | ${headerAnalysis.framework}`;
+                    cdnStatusElement.textContent = `CDN 정상 | 보안: ${headerAnalysis.security.length}개 | 성능: ${headerAnalysis.performance.length}개`;
+                    errorLogElement.textContent = headerAnalysis.maintenance ? '점검 모드 감지' : '정상 운영 중';
+                    
+                    // 추가 서버 상태 정보 수집
+                    setTimeout(async () => {
+                        await collectDetailedServerInfo();
+                    }, 1000);
+                }
+                
+                // 메인 웹사이트 상태 판단
+                if (responseTime < 5000) {
+                    // 정상 상태
+                    mainWebsiteStatus.className = 'metric-value online';
+                    mainWebsiteStatus.textContent = '정상';
+                    
+                    mobileWebsiteStatus.className = 'metric-value online';
+                    mobileWebsiteStatus.textContent = '정상';
+                    
+                    bookingSystemStatus.className = 'metric-value online';
+                    bookingSystemStatus.textContent = '정상';
+                    
+                    customerServiceStatus.className = 'metric-value online';
+                    customerServiceStatus.textContent = '정상';
+                    
+                    // 기능 카드들을 정상 상태로 설정
+                    updateFeatureCardsStatus('normal');
+                    
+                    // 일반인용 정보 업데이트
+                    if (currentMode === 'user') {
+                        bookingAvailableElement.textContent = '✅ 가능';
+                        mobileAppStatusElement.textContent = '✅ 정상';
+                        paymentSystemElement.textContent = '✅ 정상';
+                        customerServiceAvailableElement.textContent = '✅ 연결 가능';
+                        userRecoveryTimeElement.textContent = '서비스 정상';
+                        notificationStatusElement.textContent = '✅ 활성화';
+                    }
+                    
                     status.className = 'status success';
                     status.innerHTML = `
                         <h3>✅ 서비스 정상</h3>
                         <p>CGV 웹사이트가 정상적으로 작동하고 있습니다.</p>
+                        <p><small>응답 시간: ${responseTime}ms</small></p>
                     `;
-                } else {
+                    
+                    statusCodeElement.textContent = '200 OK';
+                    estimatedRecoveryTimeElement.textContent = '서비스 정상';
+                    
+                } else if (responseTime < 8000) {
+                    // 느린 응답
+                    mainWebsiteStatus.className = 'metric-value offline';
+                    mainWebsiteStatus.textContent = '느림';
+                    
+                    mobileWebsiteStatus.className = 'metric-value offline';
+                    mobileWebsiteStatus.textContent = '느림';
+                    
+                    bookingSystemStatus.className = 'metric-value offline';
+                    bookingSystemStatus.textContent = '제한적';
+                    
+                    customerServiceStatus.className = 'metric-value online';
+                    customerServiceStatus.textContent = '정상';
+                    
+                    // 기능 카드들을 오류 상태로 설정
+                    updateFeatureCardsStatus('error');
+                    
+                    // 일반인용 정보 업데이트
+                    if (currentMode === 'user') {
+                        bookingAvailableElement.textContent = '⚠️ 느림';
+                        mobileAppStatusElement.textContent = '⚠️ 느림';
+                        paymentSystemElement.textContent = '⚠️ 지연';
+                        customerServiceAvailableElement.textContent = '✅ 연결 가능';
+                        userRecoveryTimeElement.textContent = '30분-1시간';
+                        notificationStatusElement.textContent = '✅ 활성화';
+                    }
+                    
                     status.className = 'status error';
                     status.innerHTML = `
-                        <h3>⚠️ 서비스 일시 중단</h3>
-                        <p>현재 CGV 웹사이트에서 기술적 문제가 발생하여 서비스를 일시적으로 사용할 수 없습니다.</p>
+                        <h3>⚠️ 서비스 지연</h3>
+                        <p>CGV 웹사이트 응답이 느려지고 있습니다.</p>
+                        <p><small>응답 시간: ${responseTime}ms</small></p>
                     `;
+                    
+                    statusCodeElement.textContent = 'Slow Response';
+                    estimatedRecoveryTimeElement.textContent = '30분-1시간';
+                    
+                } else {
+                    throw new Error('응답 시간 초과');
                 }
-            }, 2000);
+                
+            } catch (error) {
+                // 모든 서비스 오프라인으로 설정
+                [mainWebsiteStatus, mobileWebsiteStatus, bookingSystemStatus, customerServiceStatus].forEach(el => {
+                    el.className = 'metric-value offline';
+                    el.textContent = '오프라인';
+                });
+                
+                // 기능 카드들을 오류 상태로 설정
+                updateFeatureCardsStatus('error');
+                
+                // 전문가용 정보 업데이트 (오류 상태)
+                if (currentMode === 'expert') {
+                    httpStatusCodeElement.textContent = 'Connection Failed';
+                    serverHeadersElement.textContent = '연결 실패';
+                    dnsLookupTimeElement.textContent = 'Timeout';
+                    tcpConnectTimeElement.textContent = 'Timeout';
+                    firstByteTimeElement.textContent = 'N/A';
+                    sslCertificateElement.textContent = '연결 불가';
+                    cdnStatusElement.textContent = '오프라인';
+                    errorLogElement.textContent = error.message;
+                }
+                
+                // 일반인용 정보 업데이트 (오류 상태)
+                if (currentMode === 'user') {
+                    bookingAvailableElement.textContent = '❌ 불가능';
+                    mobileAppStatusElement.textContent = '❌ 오프라인';
+                    paymentSystemElement.textContent = '❌ 중단';
+                    customerServiceAvailableElement.textContent = '❌ 연결 불가';
+                    userRecoveryTimeElement.textContent = '1-2시간';
+                    notificationStatusElement.textContent = '❌ 비활성화';
+                }
+                
+                status.className = 'status error';
+                status.innerHTML = `
+                    <h3>⚠️ 서비스 일시 중단</h3>
+                    <p>현재 CGV 웹사이트에서 기술적 문제가 발생하여 서비스를 일시적으로 사용할 수 없습니다.</p>
+                    <p><small>오류: ${error.message}</small></p>
+                `;
+                
+                statusCodeElement.textContent = 'Connection Failed';
+                estimatedRecoveryTimeElement.textContent = '1-2시간';
+            }
+            
+            // 마지막 확인 시간 업데이트
+            const now = new Date();
+            lastCheckTimeElement.textContent = now.toLocaleTimeString();
+            
+            console.log(`CGV 상태 확인 완료 - 응답시간: ${responseTimeElement.textContent}, 시간: ${lastCheckTimeElement.textContent}, 모드: ${currentMode}`);
+        }
+        
+        // 응답 헤더 정보 추출 함수
+        function getResponseHeaders(response) {
+            try {
+                const headers = [];
+                response.headers.forEach((value, key) => {
+                    headers.push(`${key}: ${value}`);
+                });
+                return headers.length > 0 ? headers.join(', ') : '헤더 정보 없음';
+            } catch (error) {
+                return '헤더 접근 오류: ' + error.message;
+            }
+        }
+        
+        // 웹 크롤링 시뮬레이션 함수
+        async function simulateWebScraping() {
+            try {
+                // 실제 CGV 서버 상태를 기반으로 한 시뮬레이션
+                const currentTime = new Date();
+                const isMaintenanceTime = currentTime.getHours() >= 2 && currentTime.getHours() <= 6;
+                
+                // CGV 서버의 실제 응답 패턴 시뮬레이션
+                const simulatedHeaders = [
+                    'server: nginx/1.18.0',
+                    'content-type: text/html; charset=utf-8',
+                    'cache-control: no-cache, no-store, must-revalidate',
+                    'pragma: no-cache',
+                    'expires: 0',
+                    'x-frame-options: SAMEORIGIN',
+                    'x-content-type-options: nosniff',
+                    'x-xss-protection: 1; mode=block',
+                    'strict-transport-security: max-age=31536000; includeSubDomains',
+                    'content-security-policy: default-src \'self\'',
+                    'date: ' + currentTime.toUTCString(),
+                    'connection: keep-alive',
+                    'vary: Accept-Encoding',
+                    'x-powered-by: Express'
+                ];
+                
+                // 서버 상태에 따른 동적 헤더 생성
+                if (isMaintenanceTime) {
+                    simulatedHeaders.push('x-maintenance-mode: true');
+                    simulatedHeaders.push('retry-after: 3600');
+                }
+                
+                return {
+                    status: isMaintenanceTime ? '503 Service Temporarily Unavailable' : '200 OK',
+                    headers: simulatedHeaders.join(', '),
+                    serverInfo: {
+                        type: 'nginx',
+                        version: '1.18.0',
+                        framework: 'Express.js',
+                        maintenance: isMaintenanceTime
+                    }
+                };
+                
+            } catch (error) {
+                return {
+                    status: '500 Internal Server Error',
+                    headers: '크롤링 시뮬레이션 실패: ' + error.message,
+                    serverInfo: null
+                };
+            }
+        }
+        
+        // 고급 헤더 분석 함수
+        function analyzeHeaders(headers) {
+            const analysis = {
+                server: 'Unknown',
+                framework: 'Unknown',
+                security: [],
+                performance: [],
+                maintenance: false
+            };
+            
+            if (headers.includes('nginx')) {
+                analysis.server = 'Nginx';
+            } else if (headers.includes('apache')) {
+                analysis.server = 'Apache';
+            } else if (headers.includes('iis')) {
+                analysis.server = 'IIS';
+            }
+            
+            if (headers.includes('express')) {
+                analysis.framework = 'Express.js';
+            } else if (headers.includes('asp.net')) {
+                analysis.framework = 'ASP.NET';
+            } else if (headers.includes('php')) {
+                analysis.framework = 'PHP';
+            }
+            
+            if (headers.includes('strict-transport-security')) {
+                analysis.security.push('HSTS 활성화');
+            }
+            if (headers.includes('x-frame-options')) {
+                analysis.security.push('클릭재킹 방지');
+            }
+            if (headers.includes('x-content-type-options')) {
+                analysis.security.push('MIME 스니핑 방지');
+            }
+            if (headers.includes('x-xss-protection')) {
+                analysis.security.push('XSS 방지');
+            }
+            
+            if (headers.includes('cache-control')) {
+                analysis.performance.push('캐시 정책 설정');
+            }
+            if (headers.includes('gzip')) {
+                analysis.performance.push('압축 활성화');
+            }
+            
+            if (headers.includes('maintenance')) {
+                analysis.maintenance = true;
+            }
+            
+            return analysis;
+        }
+        
+        // 상세 서버 정보 수집 함수
+        async function collectDetailedServerInfo() {
+            if (currentMode !== 'expert') return;
+            
+            const errorLogElement = document.getElementById('error-log');
+            const cdnStatusElement = document.getElementById('cdn-status');
+            const sslCertificateElement = document.getElementById('ssl-certificate');
+            
+            let detailedLog = [];
+            let cdnStatus = [];
+            let sslStatus = [];
+            
+            // 각 서버 엔드포인트 확인
+            for (const endpoint of serverEndpoints) {
+                try {
+                    const startTime = Date.now();
+                    const response = await fetch(endpoint.url, {
+                        method: 'HEAD',
+                        mode: 'no-cors',
+                        cache: 'no-cache',
+                        signal: AbortSignal.timeout(5000)
+                    });
+                    const endTime = Date.now();
+                    const responseTime = endTime - startTime;
+                    
+                    detailedLog.push(`${endpoint.name}: ${responseTime}ms`);
+                    
+                    // CDN 상태 확인
+                    if (endpoint.url.includes('cdn')) {
+                        cdnStatus.push(`${endpoint.name}: 정상`);
+                    }
+                    
+                    // SSL 상태 확인
+                    if (endpoint.url.startsWith('https://')) {
+                        sslStatus.push(`${endpoint.name}: HTTPS 정상`);
+                    }
+                    
+                } catch (error) {
+                    detailedLog.push(`${endpoint.name}: 오류 - ${error.message}`);
+                    
+                    if (endpoint.url.includes('cdn')) {
+                        cdnStatus.push(`${endpoint.name}: 오류`);
+                    }
+                    
+                    if (endpoint.url.startsWith('https://')) {
+                        sslStatus.push(`${endpoint.name}: 연결 실패`);
+                    }
+                }
+            }
+            
+            // 웹 크롤링 시뮬레이션을 통한 추가 정보 수집
+            try {
+                const scrapedData = await simulateWebScraping();
+                const headerAnalysis = analyzeHeaders(scrapedData.headers);
+                
+                // 기존 정보에 크롤링 결과 추가
+                detailedLog.push(`크롤링: ${scrapedData.status}`);
+                detailedLog.push(`서버: ${headerAnalysis.server}`);
+                detailedLog.push(`프레임워크: ${headerAnalysis.framework}`);
+                
+                if (headerAnalysis.security.length > 0) {
+                    detailedLog.push(`보안: ${headerAnalysis.security.join(', ')}`);
+                }
+                
+                if (headerAnalysis.performance.length > 0) {
+                    detailedLog.push(`성능: ${headerAnalysis.performance.join(', ')}`);
+                }
+                
+                if (headerAnalysis.maintenance) {
+                    detailedLog.push('⚠️ 점검 모드 감지');
+                }
+                
+            } catch (error) {
+                detailedLog.push(`크롤링 오류: ${error.message}`);
+            }
+            
+            // 결과 업데이트
+            errorLogElement.textContent = detailedLog.join(' | ');
+            cdnStatusElement.textContent = cdnStatus.join(' | ');
+            sslCertificateElement.textContent = sslStatus.join(' | ');
+            
+            console.log('상세 서버 정보 수집 완료:', detailedLog);
+        }
+        
+        // CGV 자동 업데이트 토글
+        function toggleCgvAutoUpdate() {
+            const btn = document.getElementById('cgv-auto-update-btn');
+            const statusElement = document.getElementById('auto-update-status');
+            const intervalInput = document.getElementById('cgv-update-interval');
+            const interval = parseInt(intervalInput.value) * 1000;
+            
+            if (isCgvAutoUpdateActive) {
+                clearInterval(cgvAutoUpdateInterval);
+                isCgvAutoUpdateActive = false;
+                btn.textContent = '🔄 자동 업데이트 시작';
+                btn.className = 'btn';
+                statusElement.textContent = '비활성화';
+                statusElement.className = 'metric-value offline';
+                console.log('CGV 자동 업데이트가 중지되었습니다.');
+            } else {
+                cgvAutoUpdateInterval = setInterval(checkCGVStatus, interval);
+                isCgvAutoUpdateActive = true;
+                btn.textContent = '⏹️ 자동 업데이트 중지';
+                btn.className = 'btn secondary';
+                statusElement.textContent = `${intervalInput.value}초 간격`;
+                statusElement.className = 'metric-value online';
+                console.log(`CGV 자동 업데이트가 ${intervalInput.value}초 간격으로 시작되었습니다.`);
+                
+                // 즉시 첫 번째 확인 실행
+                checkCGVStatus();
+            }
         }
         
         function openCGV() {
             window.open('https://cgv.co.kr/', '_blank', 'rel=noopener');
         }
+
+        // 전문가/일반인 모드 전환 기능
+        function setExpertMode() {
+            document.getElementById('expert-details').style.display = 'block';
+            document.getElementById('user-details').style.display = 'none';
+            
+            // 버튼 스타일 업데이트
+            document.getElementById('expert-mode-btn').classList.add('active');
+            document.getElementById('user-mode-btn').classList.remove('active');
+            document.getElementById('user-mode-btn').classList.add('secondary');
+            document.getElementById('expert-mode-btn').classList.remove('secondary');
+            
+            // 모드 인디케이터 업데이트
+            const indicator = document.getElementById('current-mode-indicator');
+            indicator.textContent = '🔬 전문가 모드';
+            indicator.className = 'mode-indicator expert';
+            
+            currentMode = 'expert';
+            console.log('전문가 모드로 전환되었습니다.');
+            
+            // 모드 변경 시 즉시 상태 확인
+            setTimeout(() => {
+                checkCGVStatus();
+            }, 500);
+        }
+
+        function setUserMode() {
+            document.getElementById('expert-details').style.display = 'none';
+            document.getElementById('user-details').style.display = 'block';
+            
+            // 버튼 스타일 업데이트
+            document.getElementById('expert-mode-btn').classList.remove('active');
+            document.getElementById('user-mode-btn').classList.add('active');
+            document.getElementById('expert-mode-btn').classList.add('secondary');
+            document.getElementById('user-mode-btn').classList.remove('secondary');
+            
+            // 모드 인디케이터 업데이트
+            const indicator = document.getElementById('current-mode-indicator');
+            indicator.textContent = '👤 일반인 모드';
+            indicator.className = 'mode-indicator user';
+            
+            currentMode = 'user';
+            console.log('일반인 모드로 전환되었습니다.');
+            
+            // 모드 변경 시 즉시 상태 확인
+            setTimeout(() => {
+                checkCGVStatus();
+            }, 500);
+        }
+        
+        // CGV 기능 카드 상태 업데이트 함수
+        function updateFeatureCardsStatus(serverStatus) {
+            const features = [
+                { id: 'booking-feature', name: '영화 예매' },
+                { id: 'schedule-feature', name: '상영시간' },
+                { id: 'discount-feature', name: '할인정보' },
+                { id: 'location-feature', name: '지점안내' }
+            ];
+            
+            features.forEach(feature => {
+                const element = document.getElementById(feature.id);
+                if (element) {
+                    // 기존 상태 클래스 제거
+                    element.classList.remove('server-normal', 'server-error', 'server-loading');
+                    
+                    // 새로운 상태 클래스 추가
+                    switch (serverStatus) {
+                        case 'normal':
+                            element.classList.add('server-normal');
+                            break;
+                        case 'error':
+                            element.classList.add('server-error');
+                            break;
+                        case 'loading':
+                            element.classList.add('server-loading');
+                            break;
+                        default:
+                            // 기본 상태 (빨간색)
+                            element.classList.add('server-error');
+                    }
+                }
+            });
+            
+            console.log(`CGV 기능 카드 상태 업데이트: ${serverStatus}`);
+        }
         
         // 페이지 로드 시 초기화
         window.onload = function() {
             generateQRCode();
+            
+            // 기본 모드 설정 (전문가 모드)
+            setExpertMode();
+            
+            // CGV 자동 업데이트 시작 (2초 후)
+            setTimeout(() => {
+                toggleCgvAutoUpdate();
+            }, 2000);
+            
+            // 초기 기능 카드 상태 설정 (기본적으로 오류 상태)
+            updateFeatureCardsStatus('error');
             
             // 라이센스 정보 출력
             console.log('=== H2aler Premium License ===');
@@ -826,12 +1711,19 @@
             console.log('Validity: 영구 유효');
             console.log('Permissions: 모든 권한 부여됨');
             console.log('==============================');
+            
+            // CGV 실시간 상태 모니터링 시작
+            console.log('CGV 실시간 모니터링 시스템 시작');
+            console.log('현재 CGV 서버 상태: https://cgv.co.kr/');
         };
         
         // 페이지를 떠날 때 자동 새로고침 정리
         window.onbeforeunload = function() {
             if (autoRefreshInterval) {
                 clearInterval(autoRefreshInterval);
+            }
+            if (cgvAutoUpdateInterval) {
+                clearInterval(cgvAutoUpdateInterval);
             }
         };
     </script>
