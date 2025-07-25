@@ -68,7 +68,7 @@ cd web-development-toolkit
 ```
 
 ### Method 3: GitHub Pages (Live Demo)
-Visit: [https://h2aler.github.io/web-development-toolkit](https://h2aler.github.io/web-development-toolkit)
+Visit: [https://h2aler.github.io/web-development-toolkit](https://h2aler.github.io/korean-cgv-web-developer-toolkit/)
 
 ## 📋 What's Included
 
